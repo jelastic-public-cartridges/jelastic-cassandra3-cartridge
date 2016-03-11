@@ -1,0 +1,65 @@
+Name: cassandra
+Cartridge-Short-Name: CASSANDRA
+Architecture: noarch
+
+Display-Name: Cassandra Database 3.0
+Description: "Cassandra is a multi-user, multi-threaded NoSQL database server."
+Version: '3.0'
+Versions: [3.0]
+Cartridge-Version: 0.0.2
+Cartridge-Vendor: rc
+License: GPL
+Vendor: Oracle
+Categories:
+  - service
+  - database
+  - embedded
+Website: http://cassandra.apache.org
+Source-Url: https://github.com/jelastic-public-cartridges/jelastic-cassandra3-cartridge.git
+Help-Topics:
+  - "Building with Cassandra" : http://docs.redhat.com/docs/en-US/OpenShift/2.0/html/User_Guide/sect-User_Guide-Working_With_Database_Cartridges.html
+Cart-Data:
+  - Key: "username"
+    Type: cart_data
+    Description: "Root user on cassandra database"
+  - Key: "password"
+    Type: cart_data
+    Description: "Password for root user on cassandra database"
+  - Key: database_name
+    Type: cart_data
+    Description: "Cassandra DB name"
+  - Key: connection_url
+    Type: cart_data
+    Description: "Cassandra DB connection URL"
+Provides:
+  - cassandra-3.0
+  - cassandra 
+  - cassandra-singleton-master
+Publishes:
+  publish-db-connection-info:
+    Type: "ENV:NET_TCP:db:connection-info"
+Subscribes:
+  reset-password-info:
+    Type: "FILESYSTEM:reset-password"
+    Required: false    
+Scaling:
+  Min: 1
+  Max: 1
+Endpoints:
+  - Private-IP-Name:   DB_HOST
+    Private-Port-Name: DB_PORT
+    Private-Port:      9042
+    Public-Port-Name:  DB_PROXY_PORT
+  - Private-IP-Name:   DB_TRANSPORT_HOST
+    Private-Port-Name: DB_TRANSPORT_PORT
+    Private-Port:      9160
+    Public-Port-Name:  DB_TRANSPORT_PROXY_PORT
+  - Private-IP-Name:   DB_STORAGE_HOST
+    Private-Port-Name: DB_STORAGE_PORT
+    Private-Port:      7000
+    Public-Port-Name:  DB_STORAGE_PROXY_PORT
+  - Private-IP-Name:   DB_STORAGE_HTTPS_HOST
+    Private-Port-Name: DB_STORAGE_HTTPS_PORT
+    Private-Port:      7199
+    Public-Port-Name:  DB_STORAGE_HTTPS_PROXY_PORT
+Install-Build-Required: false

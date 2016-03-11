@@ -1,0 +1,106 @@
+#!/bin/bash
+
+source $OPENSHIFT_CARTRIDGE_SDK_BASH
+
+source /etc/jelastic/environment
+
+export STOPTIMEOUT=10
+
+function is_running {
+  pidfile=$OPENSHIFT_CASSANDRA_DIR/cassandra.pid
+
+  if [ -f $pidfile ]; then
+    cass_pid=`cat $pidfile 2> /dev/null`
+
+    if `ps --pid $cass_pid > /dev/null 2>&1` 
+    then
+      return 0
+    fi
+  fi
+
+  return 1
+}
+
+function start {
+  sed -i "s/^listen_address:.*/listen_address: $J_OPENSHIFT_CASSANDRA_DB_HOST/" /opt/repo/versions/${Version}/conf/cassandra.yaml
+  sed -i "s/^broadcast_rpc_address:.*/broadcast_rpc_address: $J_OPENSHIFT_CASSANDRA_DB_HOST/" /opt/repo/versions/${Version}/conf/cassandra.yaml
+  sed -i "s/- seeds:.*/- seeds: \"$J_OPENSHIFT_CASSANDRA_DB_HOST\"/" /opt/repo/versions/${Version}/conf/cassandra.yaml
+  if ! is_running; then
+    	echo "Starting Cassandra server...";
+    	$OPENSHIFT_CASSANDRA_DIR/versions/${Version}/bin/cassandra -p $OPENSHIFT_CASSANDRA_DIR/cassandra.pid > /dev/null 2>&1;
+  	retries=90
+        while [ $retries -gt 0 ]; do
+                [ -n "$(netstat -nlpt 2>/dev/null | grep $OPENSHIFT_CASSANDRA_DB_PORT)" ] && break
+                sleep 1
+        let retries=${retries}-1
+        done
+  else
+    echo "Cassandra already running" 1>&2
+  fi
+}
+
+function wait_for_cassandrad_availability {
+  pidfile=$OPENSHIFT_CASSANDRA_DIR/cassandra.pid
+
+  if [ -n "$OPENSHIFT_CASSANDRA_DB_USERNAME" ]; then
+    i=0
+    sleep 1
+    while (( ! touch_cassandrad ) || [ ! -f $pidfile ]) && [ $i -lt 30 ]
+    do
+      sleep 1
+      i=$(($i + 1))
+    done
+  fi
+}
+
+function stop {
+  if is_running; then
+    echo "Stopping Cassandra server...";
+    pidfile=$OPENSHIFT_CASSANDRA_DIR/cassandra.pid;
+    if [ -f $pidfile ]; then
+      pid=$( /bin/cat $pidfile )
+      /bin/kill $pid
+      ret=$?
+      if [ $ret -eq 0 ]; then
+        TIMEOUT="$STOPTIMEOUT"
+        while [ $TIMEOUT -gt 0 ] && [ -f "$pidfile" ]
+        do
+          /bin/kill -0 "$pid" >/dev/null 2>&1 || break
+          sleep 1
+          let TIMEOUT=${TIMEOUT}-1
+        done
+      fi
+	rm -f $pidfile;
+    else
+      echo "Cassandra already stopped" 1>&2
+    fi
+    else
+      echo "Cassandra already stopped"
+  fi
+}
+
+function status {
+  if is_running; then
+    client_result "Cassandra is running" 
+  else
+    client_result "Cassandra is stopped" 
+  fi
+
+  exit 0
+}
+
+case "$1" in
+  start)
+    start
+  ;;
+  stop)
+    stop
+  ;;
+  status)
+    status
+  ;;
+  restart)
+    stop
+    start
+  ;;
+esac
