@@ -22,6 +22,7 @@ function is_running {
 }
 
 function start {
+  J_OPENSHIFT_CASSANDRA_DB_HOST=$(echo $J_OPENSHIFT_CASSANDRA_DB_HOST|awk '{print $1}');
   sed -i "s/^listen_address:.*/listen_address: $J_OPENSHIFT_CASSANDRA_DB_HOST/" /opt/repo/versions/${Version}/conf/cassandra.yaml
   sed -i "s/^broadcast_rpc_address:.*/broadcast_rpc_address: $J_OPENSHIFT_CASSANDRA_DB_HOST/" /opt/repo/versions/${Version}/conf/cassandra.yaml
   sed -i "s/- seeds:.*/- seeds: \"$J_OPENSHIFT_CASSANDRA_DB_HOST\"/" /opt/repo/versions/${Version}/conf/cassandra.yaml
