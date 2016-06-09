@@ -256,7 +256,7 @@ fi
 # http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6342561 (short version:
 # comment out this entry to enable IPv6 support).
 JVM_OPTS="$JVM_OPTS -Djava.net.preferIPv4Stack=true"
-
+JVM_OPTS="$JVM_OPTS -Dcassandra.superuser_setup_delay_ms=0"
 # jmx: metrics and administration interface
 #
 # add this if you're having trouble connecting:
