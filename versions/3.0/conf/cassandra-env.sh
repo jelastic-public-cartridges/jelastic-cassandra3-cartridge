@@ -14,6 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+. /etc/jelastic/environment
+
 calculate_heap_sizes()
 {
     case "`uname`" in
@@ -161,7 +163,7 @@ fi
 # starting cassandra.
 
 # Read user-defined JVM options from jvm.options file
-. /opt/repo/versions/3.0/bin/memoryConfig.sh
+. /opt/repo/versions/${Version}/bin/variablesparser.sh
 
 JVM_OPTS="$JVM_OPTS $XMX $XMS"
 
