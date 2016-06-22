@@ -70,8 +70,8 @@ calculate_heap_sizes()
     else
         max_heap_size_in_mb="$quarter_system_memory_in_mb"
     fi
-    MAX_HEAP_SIZE=400m
-    MIN_HEAP_SIZE=300m
+    MAX_HEAP_SIZE=819M
+    MIN_HEAP_SIZE=819M
 
     # Young gen: min(max_sensible_per_modern_cpu_core * num_cores, 1/4 * heap size)
     max_sensible_yg_per_core_in_mb="100"
@@ -137,7 +137,7 @@ esac
 # times. If in doubt, and if you do not particularly want to tweak, go with
 # 100 MB per physical CPU core.
 
-#MAX_HEAP_SIZE=700m
+#MAX_HEAP_SIZE=819M
 #HEAP_NEWSIZE="800M"
 
 # Set this to control the amount of arenas per-thread in glibc
@@ -161,6 +161,10 @@ fi
 # starting cassandra.
 
 # Read user-defined JVM options from jvm.options file
+. /opt/repo/versions/3.0/bin/memoryConfig.sh
+
+JVM_OPTS="$JVM_OPTS $XMX $XMS"
+
 JVM_OPTS_FILE=$CASSANDRA_CONF/jvm.options
 for opt in `grep "^-" $JVM_OPTS_FILE`
 do
@@ -314,3 +318,4 @@ JVM_OPTS="$JVM_OPTS -Djava.library.path=$CASSANDRA_HOME/lib/sigar-bin"
 JVM_OPTS="$JVM_OPTS $MX4J_ADDRESS"
 JVM_OPTS="$JVM_OPTS $MX4J_PORT"
 JVM_OPTS="$JVM_OPTS $JVM_EXTRA_OPTS"
+
