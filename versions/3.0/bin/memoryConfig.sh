@@ -1,5 +1,11 @@
 #!/bin/bash        
 
+if ! `echo $JAVA_OPTS | grep -q "\-Xms[[:digit:]\.]"`
+then
+        [ -z "$XMS" ] && { XMS="-Xms32M"; }
+        JAVA_OPTS=$JAVA_OPTS" $XMS"; 
+fi
+
 if ! `echo $JAVA_OPTS | grep -q "\-Xmn[[:digit:]\.]"`
 then
         [ -z "$XMN" ] && { XMN="-Xmn30M"; }
@@ -12,9 +18,8 @@ then
         	#optimal XMX = 80% * total available RAM
         	#it differs a little bit from default values -Xmx http://docs.oracle.com/cd/E13150_01/jrockit_jvm/jrockit/jrdocs/refman/optionX.html
         	memory_total=`free -m | grep Mem | awk '{print $2}'`;
-        	let XMS=XMX=memory_total*8/10;
-        	export XMX="-Xmx${XMX}M";
-		export XMS="-Xms${XMS}M";
+        	let XMX=memory_total*8/10;
+        	XMX="-Xmx${XMX}M";
         }
         JAVA_OPTS=$JAVA_OPTS" $XMX";
 fi
