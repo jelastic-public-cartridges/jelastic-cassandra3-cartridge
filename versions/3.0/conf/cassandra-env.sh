@@ -163,7 +163,8 @@ fi
 # Read user-defined JVM options from jvm.options file
 . /opt/repo/versions/${Version}/bin/variablesparser.sh
 
-JVM_OPTS="${JVM_OPTS} ${XMS} ${XMX} ${XMINF} ${XMAXF} ${XMN}"
+JVM_OPTS=""
+JVM_OPTS="${JVM_OPTS} ${JAVA_OPTS}"
 
 JVM_OPTS_FILE=$CASSANDRA_CONF/jvm.options
 for opt in `grep "^-" $JVM_OPTS_FILE`
