@@ -25,4 +25,5 @@ function _setPassword() {
         service cartridge restart > /dev/null 2>&1;
         
         [ -f "$new_passwd_file" ] && $cqlsh_app -u $J_OPENSHIFT_APP_ADM_USER -p "cassandra"  --file $new_passwd_file;
+        return 0;
 }
