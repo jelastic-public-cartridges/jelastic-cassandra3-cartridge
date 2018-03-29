@@ -62,4 +62,8 @@ Endpoints:
     Private-Port-Name: DB_STORAGE_HTTPS_PORT
     Private-Port:      7199
     Public-Port-Name:  DB_STORAGE_HTTPS_PROXY_PORT
+  - Private-IP-Name:   EXIM_IP
+    Private-Port-Name: EXIM_PORT
+    Private-Port:      7979
+    Public-Port-Name:  EXIM_PROXY_PORT
 Install-Build-Required: false
